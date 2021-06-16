@@ -8,17 +8,18 @@ using System.Web.Mvc;
 
 namespace CursoMVC.Controllers
 {
-    
+    [CustomAuthenticationFilter]
     public class UserController : Controller
     {
         private UserDBContext db = new UserDBContext();
 
+        [AllowAnonymous]
         // GET: User
         public ActionResult RegisterUser()
         {
             return View();
         }
-
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult RegisterUser(UserModel model)
         {
@@ -36,7 +37,7 @@ namespace CursoMVC.Controllers
             }
 
         }
-        [CustomAuthenticationFilter]
+        
         public ActionResult ListUsers()
         {
             var Users = from e in db.Users
@@ -62,6 +63,7 @@ namespace CursoMVC.Controllers
             return View(User);
         }
 
+        
         public ActionResult DeleteUser(string id)
         {
             var User = db.Users.Single(x => x.Cedula == id);
@@ -70,6 +72,7 @@ namespace CursoMVC.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize(roles: "Admin1234")]
         public ActionResult DeleteUser(string id, FormCollection collection)
         {
             var User = db.Users.Single(x => x.Cedula == id);
@@ -124,5 +127,9 @@ namespace CursoMVC.Controllers
             return RedirectToAction("Login");
         }
 
+        public ActionResult Unauthorized()
+        {
+            return View();
+        }
     }
 }
